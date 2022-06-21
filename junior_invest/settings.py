@@ -1,3 +1,5 @@
+import os
+import pathlib
 from pathlib import Path
 
 from yaml import load
@@ -14,6 +16,26 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = config.get('debug', False)
 SECRET_KEY = config.get('secretKey')
 ALLOWED_HOSTS = config.get('allowedHosts')
+ASGI_APPLICATION = "junior_invest.asgi.application"
+
+if DEBUG and not config.get('redis'):
+    channels_config = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer"
+        }
+    }
+else:
+    redis_config = config.get('redis')
+    channels_config = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                'hosts': [(redis_config.get('host'), redis_config.get('port'))],
+            },
+        }
+    }
+
+CHANNEL_LAYERS = channels_config
 
 INSTALLED_APPS = [
     'grappelli',
@@ -26,6 +48,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'rest_framework_simplejwt',
+    'channels',
 
     'junior_invest.user',
 ]
@@ -63,7 +86,7 @@ WSGI_APPLICATION = 'junior_invest.wsgi.application'
 postgres_config = config.get('postgres')
 DATABASES = {
     'default': {
-        'ENGINE': postgres_config.get('driver', 'django.db.backends.postgresql'),
+        'ENGINE': postgres_config.get('driver', 'django.db.backends.postgresql_psycopg2'),
         'NAME': postgres_config.get('name'),
         'USER': postgres_config.get('user'),
         'PASSWORD': postgres_config.get('password'),
@@ -94,11 +117,11 @@ REST_FRAMEWORK = {
     )
 }
 
-
 LANGUAGE_CODE = 'ru'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = pathlib.Path(BASE_DIR, 'static')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
