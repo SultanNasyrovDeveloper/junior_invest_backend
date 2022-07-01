@@ -1,3 +1,14 @@
-from django.shortcuts import render
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
-# Create your views here.
+from . import serializers
+
+
+class GetMeView(APIView):
+
+    permission_classes = []
+
+    def get(self, request, *args, **kwargs):
+        return Response(
+            serializers.UserSerializer(request.user).data
+        )
