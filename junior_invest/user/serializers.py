@@ -1,10 +1,16 @@
+from djoser.serializers import (
+    UserCreateSerializer as DjoserUserCreateSerializer
+)
 from rest_framework import serializers
 
 from . import models
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(DjoserUserCreateSerializer):
 
-    class Meta:
+    first_name = serializers.CharField(required=True)
+    last_name = serializers.CharField(required=True)
+
+    class Meta(DjoserUserCreateSerializer.Meta):
         model = models.User
-        exclude = ('password', )
+        fields = ('id', 'email', 'first_name', 'last_name', 'password')
