@@ -1,3 +1,4 @@
+from django.db.models import Count
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
@@ -18,6 +19,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = models.Project.objects.all()
     serializer_class = serializers.ProjectSerializer
     filterset_class = filters.ProjectFilterSet
+
+    def get_queryset(self):
+        if self.action == 'list':
+            return self.queryset.annotate(votes_count=Count('votes'))
+        return self.queryset
 
     def create(self, request, *args, **kwargs) -> Response:
         """

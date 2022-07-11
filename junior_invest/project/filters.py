@@ -12,6 +12,14 @@ class ProjectCategoryFilterSet(filters.FilterSet):
 
 class ProjectFilterSet(filters.FilterSet):
 
+    category = filters.ModelMultipleChoiceFilter(
+        queryset=models.ProjectCategory.objects.all()
+    )
+
+    order = filters.OrderingFilter(
+        fields=('created', 'name', 'votes_count')
+    )
+
     class Meta:
         model = models.Project
         exclude = ('image', 'presentation')

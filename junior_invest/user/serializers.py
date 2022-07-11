@@ -14,3 +14,11 @@ class UserSerializer(DjoserUserCreateSerializer):
     class Meta(DjoserUserCreateSerializer.Meta):
         model = models.User
         fields = ('id', 'email', 'first_name', 'last_name', 'password')
+
+
+class SimpleUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.User
+        fields = ('id', 'first_name', 'last_name')
+

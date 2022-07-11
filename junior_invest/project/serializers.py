@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from junior_invest.user.serializers import SimpleUserSerializer
+
 from . import models
 
 
@@ -37,7 +39,9 @@ class ProjectVoteSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
 
+    author = SimpleUserSerializer()
     images = ProjectImageSerializer(many=True, required=False)
+    votes_count = serializers.IntegerField(required=False)
 
     class Meta:
         model = models.Project
