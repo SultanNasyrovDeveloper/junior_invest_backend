@@ -1,6 +1,7 @@
 from django.db.models import Count
 from rest_framework import status
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
@@ -12,6 +13,7 @@ class ProjectCategoryViewSet(viewsets.ModelViewSet):
     queryset = models.ProjectCategory.objects.all()
     serializer_class = serializers.ProjectCategorySerializer
     filterset_class = filters.ProjectCategoryFilterSet
+    permission_classes = []
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -20,8 +22,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ProjectSerializer
     filterset_class = filters.ProjectFilterSet
 
+    def get_permissions(self):
+        if self.action in ('list', 'retrieve'):
+            return []
+        return super().get_permissions()
+
     def get_queryset(self):
-        if self.action == 'list':
+        if self.action in ('list', 'retrieve'):
             return self.queryset.annotate(votes_count=Count('votes'))
         return self.queryset
 
@@ -40,7 +47,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        serializer.save()
 
         headers = self.get_success_headers(serializer.data)
         return Response(
@@ -61,3 +68,22 @@ class ProjectVoteViewSet(viewsets.ModelViewSet):
     queryset = models.ProjectVote.objects.all()
     serializer_class = serializers.ProjectVoteSerializer
     filterset_class = filters.ProjectVoteFilterSet
+
+
+class ProjectMediaViewSet(viewsets.ModelViewSet):
+
+    queryset = models.ProjectMedia.objects.all()
+    serializer_class = serializers.ProjectMediaSerializer
+
+    @action(detail=False, methods=('POST', ))
+    def create_bulk(self, request, *args, **kwargs):
+        data = request.data
+        media_objects = []
+        for data_object in data.get('media', []):
+            serializer = serializers.ProjectMediaSerializer(data=data_object)
+            serializer.is_valid(True)
+            media_objects.append(models.ProjectMedia(**serializer.validated_data))
+        models.ProjectMedia.objects.bulk_create(media_objects)
+        return Response({'status': 'success'})
+
+

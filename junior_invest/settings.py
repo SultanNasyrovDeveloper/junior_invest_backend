@@ -17,9 +17,22 @@ DEBUG = config.get('debug', False)
 SECRET_KEY = config.get('secretKey')
 ALLOWED_HOSTS = config.get('allowedHosts')
 
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline'],
+            ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+            ['Link', 'Unlink'],
+            ['RemoveFormat', 'Source']
+        ]
+    },
+}
+
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
 
 INSTALLED_APPS = [
-    'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -32,9 +45,11 @@ INSTALLED_APPS = [
     'django_filters',
     'djoser',
     'imagekit',
+    'ckeditor',
 
     'junior_invest.user',
     'junior_invest.project',
+    'junior_invest.pages',
 
     'django_cleanup.apps.CleanupConfig'
 ]

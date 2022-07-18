@@ -12,6 +12,15 @@ class ProjectCategory(models.Model):
     name = models.CharField(max_length=1000)
 
 
+class ProjectMedia(models.Model):
+    project = models.ForeignKey(
+        'project.Project',
+        on_delete=models.CASCADE,
+        related_name='media'
+    )
+    url = models.URLField(max_length=500)
+
+
 class Project(models.Model):
 
     status = models.TextField(
@@ -37,7 +46,6 @@ class Project(models.Model):
         null=True,
         default=None
     )
-    youtube_video_url = models.CharField(max_length=500, default='')
 
     created = models.DateTimeField(auto_created=True, default=datetime.now)
 
