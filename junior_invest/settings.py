@@ -96,8 +96,7 @@ REST_FRAMEWORK = {
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = config.get('allowedCorsOrigins')
 
-DOMAIN = 'localhost:3000'
-SITE_NAME = 'Junior invest'
+SITE_NAME = 'Junior Invest'
 DJOSER = {
     'LOGIN_FIELD': 'email',
     'USER_CREATE_PASSWORD_RETYPE': True,
