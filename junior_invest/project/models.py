@@ -85,4 +85,7 @@ class ProjectVote(models.Model):
         related_name='votes'
     )
 
+    class Meta:
+        unique_together = ('user', 'project')
+
 
