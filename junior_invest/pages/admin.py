@@ -1,13 +1,13 @@
 from django import forms
 from django.contrib import admin
-from ckeditor.widgets import CKEditorWidget
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
 from junior_invest.pages.models import Page
 
 
 class PageAdminForm(forms.ModelForm):
 
-    content = forms.CharField(widget=CKEditorWidget())
+    content = forms.CharField(widget=CKEditorUploadingWidget())
 
     class Meta:
         model = Page
