@@ -2,7 +2,7 @@ from django import forms
 from django.contrib import admin
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
-from junior_invest.pages.models import Page
+from junior_invest.pages.models import Page, TermsPageFiles
 
 
 class PageAdminForm(forms.ModelForm):
@@ -14,8 +14,11 @@ class PageAdminForm(forms.ModelForm):
         fields = '__all__'
 
 
+@admin.register(Page)
 class PageAdmin(admin.ModelAdmin):
     form = PageAdminForm
 
 
-admin.site.register(Page, PageAdmin)
+@admin.register(TermsPageFiles)
+class TermsPageFileAdmin(admin.ModelAdmin):
+    pass
