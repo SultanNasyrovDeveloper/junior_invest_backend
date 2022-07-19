@@ -48,6 +48,11 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     media = ProjectMediaSerializer(many=True, required=False)
     images = ProjectImageSerializer(many=True, required=False)
+    votes = serializers.PrimaryKeyRelatedField(
+        many=True,
+        required=False,
+        read_only=True
+    )
     votes_count = serializers.IntegerField(required=False)
 
     class Meta:

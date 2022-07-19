@@ -2,7 +2,7 @@ from django.db.models import Count
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.response import Response
 
 from . import models, serializers, filters, enums
@@ -23,9 +23,28 @@ class ProjectViewSet(viewsets.ModelViewSet):
     filterset_class = filters.ProjectFilterSet
 
     def get_permissions(self):
+        """
+        Manage project permissions.
+
+        list: Anyone can access list view. Even not authorized users, because you can
+        see only moderated projects.
+        create: Any authenticated user can create a project.
+        retrieve: Any user can access any moderated project. Not moderated projects can be accessed
+        only bt authors and staff members.
+        patch: you can patch only your projects than in created status. Staff can patch any project.
+        delete: only staff can delete projects.
+        """
         if self.action in ('list', 'retrieve'):
             return []
         return super().get_permissions()
+
+    def check_object_permissions(self, request, obj):
+        # if self.action == 'retrieve':
+        #     if obj.status == enums.ProjectStatusEnum.moderated:
+        #         return
+        #     if obj.author_id != request.user.id:
+        #         raise PermissionDenied
+        return super().check_object_permissions(request, obj)
 
     def get_queryset(self):
         if self.action in ('list', 'retrieve'):
@@ -68,6 +87,12 @@ class ProjectVoteViewSet(viewsets.ModelViewSet):
     queryset = models.ProjectVote.objects.all()
     serializer_class = serializers.ProjectVoteSerializer
     filterset_class = filters.ProjectVoteFilterSet
+
+    def create(self, request, *args, **kwargs):
+        project = models.Project.objects.get(id=request.data['project'])
+        if project.author_id == request.user.id:
+            raise ValidationError('Вы не можете голосовать за свой проект')
+        return super().create(request, *args, **kwargs)
 
 
 class ProjectMediaViewSet(viewsets.ModelViewSet):
