@@ -7,7 +7,7 @@ class ProjectCategoryFilterSet(filters.FilterSet):
 
     class Meta:
         model = models.ProjectCategory
-        fields = '__all__'
+        exclude = ('image', )
 
 
 class ProjectFilterSet(filters.FilterSet):

@@ -10,6 +10,10 @@ from .enums import ProjectStatusEnum
 class ProjectCategory(models.Model):
 
     name = models.CharField(max_length=1000, verbose_name='Название')
+    image = models.ImageField(
+        upload_to='project_category_images/',
+        null=True, default=None
+    )
 
     class Meta:
         verbose_name = 'Категория проекта'
