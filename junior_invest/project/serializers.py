@@ -46,7 +46,7 @@ class ProjectVoteSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
 
-    media = ProjectMediaSerializer(many=True)
+    media = ProjectMediaSerializer(many=True, required=False)
     images = ProjectImageSerializer(many=True, required=False)
     votes_count = serializers.IntegerField(required=False)
 
